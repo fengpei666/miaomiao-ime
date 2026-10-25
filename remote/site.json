@@ -1,0 +1,74 @@
+{
+  "app": {
+    "name": "喵喵输入法",
+    "nameEn": "MiaoMiao IME",
+    "packageName": "org.fcitx.fcitx5.android",
+    "version": "0.1.4",
+    "versionCode": 122,
+    "releaseDate": "2026-10-25",
+    "license": "LGPL-2.1-or-later",
+    "basedOn": "Fcitx5 for Android",
+    "tagline": "一只会帮你加「喵」的输入法"
+  },
+  "links": {
+    "website": "https://miao.zyycyun.cn",
+    "repo": "https://github.com/fengpei666/miaomiao-ime",
+    "releases": "https://github.com/fengpei666/miaomiao-ime/releases",
+    "latest": "https://github.com/fengpei666/miaomiao-ime/releases/latest",
+    "issues": "https://github.com/fengpei666/miaomiao-ime/issues",
+    "privacy": "https://miao.zyycyun.cn/privacy/",
+    "upstream": "https://github.com/fcitx5-android/fcitx5-android"
+  },
+  "updateLog": [
+    "关于页以喵喵输入法为主体，修复换行转义",
+    "在线更新 / 公告 / 在线服务改为 GitHub 托管，加载更稳定",
+    "公告支持按版本号与时间过滤",
+    "贡献者顺序调整：作者在前，Claude 在后"
+  ],
+  "downloads": [
+    {
+      "abi": "arm64-v8a",
+      "label": "主流手机（推荐）",
+      "file": "org.fcitx.fcitx5.android-0.1.4-arm64-v8a-release.apk",
+      "size": 46316890,
+      "sizeText": "44.2 MB",
+      "url": "https://github.com/fengpei666/miaomiao-ime/releases/download/v0.1.4/org.fcitx.fcitx5.android-0.1.4-arm64-v8a-release.apk"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "label": "较老的 32 位设备",
+      "file": "org.fcitx.fcitx5.android-0.1.4-armeabi-v7a-release.apk",
+      "size": 45690611,
+      "sizeText": "43.6 MB",
+      "url": "https://github.com/fengpei666/miaomiao-ime/releases/download/v0.1.4/org.fcitx.fcitx5.android-0.1.4-armeabi-v7a-release.apk"
+    },
+    {
+      "abi": "x86_64",
+      "label": "模拟器（64 位）",
+      "file": "org.fcitx.fcitx5.android-0.1.4-x86_64-release.apk",
+      "size": 46490427,
+      "sizeText": "44.3 MB",
+      "url": "https://github.com/fengpei666/miaomiao-ime/releases/download/v0.1.4/org.fcitx.fcitx5.android-0.1.4-x86_64-release.apk"
+    },
+    {
+      "abi": "x86",
+      "label": "模拟器（32 位）",
+      "file": "org.fcitx.fcitx5.android-0.1.4-x86-release.apk",
+      "size": 46552767,
+      "sizeText": "44.4 MB",
+      "url": "https://github.com/fengpei666/miaomiao-ime/releases/download/v0.1.4/org.fcitx.fcitx5.android-0.1.4-x86-release.apk"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "fengpei",
+      "role": "作者 / 维护者",
+      "url": "https://github.com/fengpei666"
+    },
+    {
+      "name": "Claude",
+      "role": "AI 编程助手",
+      "url": "https://claude.ai"
+    }
+  ]
+}

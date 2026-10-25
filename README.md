@@ -26,10 +26,32 @@ App 的「检查更新」「公告」「在线服务」「赞助」全部读取�
 | `remote/notice.json` | 公告 | 数组 `notices[]`，每项：`id`、`title`、`content`、`enabled`、`minVersionCode`、`maxVersionCode`、`startTime`、`endTime`、`linkText`、`linkUrl` |
 | `remote/config.json` | 在线服务入口 | `maintenance`、`qqGroup`、`douyinGroup`、`feedbackUrl`、`privacyUrl`、`shareText` |
 | `remote/sponsor.json` | 赞助入口 | `enabled`、`title`、`desc`、`url`、`sponsors[]` |
+| `remote/site.json` | 官网数据 | `app`、`links`、`updateLog`、`downloads[]`、`contributors[]` |
 
 - 发新版：把 `available` 置为 `true`，`versionCode` 填比当前 App 更大的值，`downloadUrl` 填 GitHub Releases 里的 APK 地址。
 - 公告时间格式支持 `yyyy-MM-dd HH:mm:ss`、`yyyy-MM-dd HH:mm`、ISO 8601 或纯日期；留空表示不限。
 - 数据源依次尝试 raw.githubusercontent、ghproxy、jsDelivr，任一可用即可；全部失败时静默降级（不弹窗、不报错）。
+
+### 官网接入 / Website
+
+官网（<https://miao.zyycyun.cn>）不需要单独维护版本号与下载地址，直接读取 `remote/site.json` 即可：
+
+```js
+fetch('https://cdn.jsdelivr.net/gh/fengpei666/miaomiao-ime@master/remote/site.json')
+  .then(r => r.json())
+  .then(s => {
+    document.querySelector('#version').textContent = `v${s.app.version}`;
+    document.querySelector('#date').textContent = s.app.releaseDate;
+    document.querySelector('#notes').innerHTML = s.updateLog
+      .map(t => `<li>${t}</li>`).join('');
+    document.querySelector('#downloads').innerHTML = s.downloads
+      .map(d => `<a href="${d.url}">${d.label} · ${d.sizeText}</a>`).join('');
+  });
+```
+
+- `raw.githubusercontent.com` 与 `cdn.jsdelivr.net` 都返回 `Access-Control-Allow-Origin: *`，浏览器可直接跨域读取。
+- 只想拿版本号：`s.app.version`；想列出历史版本：调用 `https://api.github.com/repos/fengpei666/miaomiao-ime/releases`（匿名限流 60 次/小时，建议加缓存）。
+- 发版时记得同步 `remote/site.json` 的 `app.version`、`app.versionCode`、`updateLog` 与 `downloads`，否则官网仍显示旧版本。
 
 ### 发版 / Release
 
