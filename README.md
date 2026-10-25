@@ -1,30 +1,28 @@
 # 喵喵输入法 / MiaoMiao IME
 
-> **本项目是 [Fcitx5 for Android](https://github.com/fcitx5-android/fcitx5-android)（小企鹅输入法 Android 版）的二次开发版本（fork）。**
-> **This project is a fork of [Fcitx5 for Android](https://github.com/fcitx5-android/fcitx5-android).**
+一只会帮你加「喵」的输入法。
 
-- 上游基线 / Upstream baseline: `fcitx5-android` @ `6998502`（"Update fcitx5 submodules"）
-- 输入法引擎 / Engine: [Fcitx5](https://fcitx-im.org)（fcitx，中文名「小企鹅输入法」/ Little Penguin input method）
-- 许可证 / License: [LGPL-2.1-or-later](./LICENSE)，沿用上游 / same as upstream
+- 拼音 / 双拼 / 五笔等方案，可在设置里指定「默认语言」
+- 打中文后自动追加猫娘语气后缀，强度与触发条件可调
+- 表情符号、剪贴板、快捷短语、主题与键盘布局
+- 官网：<https://miao.zyycyun.cn>
 
-## 与上游的差异 / Differences from upstream
+## 贡献者 / Contributors
 
-- 移除内置语音输入（sherpa-onnx 引擎、识别模型、相关设置与 `RECORD_AUDIO` 权限）
-- 输入法列表支持设置「默认输入法」：写入 fcitx 的 `DefaultIM`，键盘弹出时按此语言激活；键盘直通布局固定在列表首位
-- 新增喵喵特色：打中文后自动追加猫娘语气后缀
-- 新增在线公告 / 更新检查 / 赞助页面
-- 关于页新增开源与二次开发声明
-- 修复 `FcitxAPI` 接口委托（`object : FcitxAPI by ...`）导致的 `AbstractMethodError`
+| 贡献者 | 角色 |
+| --- | --- |
+| fengpei | 作者 / 维护者 |
+| Claude | AI 编程助手 · 参与代码与发布 |
 
-## 开发与协作 / Development
+## 开源声明 / License
 
-本项目的开发与发布在 AI 编程助手（CodeBuddy，底层模型为 Anthropic Claude 系列）协助下完成。
-
-仓库内置了 [Claude Code GitHub Action](https://github.com/anthropics/claude-code-action) 的接入配置（`.github/workflows/claude.yml`）：在 `Settings → Secrets and variables → Actions` 添加 `ANTHROPIC_API_KEY` 后，即可在 Issue / PR 里 `@claude`，让 Claude 参与代码修改与审查。
+本项目基于 [Fcitx5 for Android](https://github.com/fcitx5-android/fcitx5-android)（fcitx5，中文名「小企鹅输入法」）二次开发，遵循 [LGPL-2.1-or-later](./LICENSE)。
+上游版权归 Fcitx5 for Android Contributors 所有。
 
 ---
 
 以下为上游 README 原文 / Below is the original upstream README：
+
 
 # fcitx5-android
 

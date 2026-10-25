@@ -8,7 +8,8 @@ import org.fcitx.fcitx5.android.BuildConfig
 
 object Const {
     const val versionName = "${BuildConfig.VERSION_NAME}-${BuildConfig.BUILD_TYPE}"
-    const val githubRepo = "https://github.com/fcitx5-android/fcitx5-android"
+    /** 本项目仓库 */
+    const val githubRepo = "https://github.com/fengpei666/miaomiao-ime"
     /** 本应用二次开发所基于的上游项目：Fcitx5 for Android（小企鹅输入法 Android 版） */
     const val upstreamRepo = "https://github.com/fcitx5-android/fcitx5-android"
     /** 上游输入法框架 Fcitx5（小企鹅输入法）官网 */

@@ -49,33 +49,40 @@ class AboutFragment : PaddingPreferenceFragment() {
     private fun buildScreen() {
         val ctx = requireContext()
         preferenceScreen = preferenceManager.createPreferenceScreen(ctx).apply {
-            // 二开声明：明确写出本项目基于哪个上游项目
-            addCategory(R.string.about_source) {
+            // 主体：喵喵输入法
+            addCategory(R.string.about_app) {
                 isIconSpaceReserved = false
-                addPreference(R.string.fork_notice_title, R.string.fork_notice_summary) {
-                    showForkNotice()
+                addPreference(R.string.about_app_intro, R.string.about_app_intro_summary) {
+                    showAppIntro()
                 }
-                addPreference(R.string.upstream_project, R.string.upstream_project_summary) {
+                addPreference(R.string.official_website) {
+                    openUrl(Const.officialWebsite)
+                }
+            }
+            addCategory(R.string.about_contributors) {
+                isIconSpaceReserved = false
+                addPreference(R.string.contributor_claude, R.string.contributor_claude_summary) {
+                    openUrl("https://claude.ai")
+                }
+            }
+            // 开源声明：只保留必要的一句，说明许可与来源
+            addCategory(R.string.about_license) {
+                isIconSpaceReserved = false
+                addPreference(R.string.about_based_on, R.string.about_based_on_summary) {
                     openUrl(Const.upstreamRepo)
                 }
-                addPreference(R.string.upstream_engine, R.string.upstream_engine_summary) {
-                    openUrl(Const.upstreamEngineUrl)
+                addPreference(
+                    R.string.open_source_licenses,
+                    R.string.licenses_of_third_party_libraries
+                ) {
+                    navigateWithAnim(SettingsRoute.License)
                 }
-            }
-            addPreference(R.string.privacy_policy) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Const.privacyPolicyUrl)))
-            }
-            addPreference(
-                R.string.open_source_licenses,
-                R.string.licenses_of_third_party_libraries
-            ) {
-                navigateWithAnim(SettingsRoute.License)
-            }
-            addPreference(R.string.official_website) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Const.officialWebsite)))
-            }
-            addPreference(R.string.license, Const.licenseSpdxId) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Const.licenseUrl)))
+                addPreference(R.string.license, Const.licenseSpdxId) {
+                    openUrl(Const.licenseUrl)
+                }
+                addPreference(R.string.privacy_policy) {
+                    openUrl(Const.privacyPolicyUrl)
+                }
             }
             addCategory(R.string.version) {
                 isIconSpaceReserved = false
@@ -138,10 +145,20 @@ class AboutFragment : PaddingPreferenceFragment() {
         }
     }
 
-    private fun showForkNotice() {
+    private fun showAppIntro() {
+        // 用 Kotlin 拼行，避免 XML 里的换行转义在不同构建下被误解析
+        val message = listOf(
+            getString(R.string.about_app_intro_p1),
+            "",
+            getString(R.string.about_app_intro_p2),
+            getString(R.string.about_app_intro_p3),
+            getString(R.string.about_app_intro_p4),
+            "",
+            getString(R.string.official_website) + "  " + Const.officialWebsite
+        ).joinToString("\n")
         AlertDialog.Builder(requireContext())
-            .setTitle(R.string.fork_notice_title)
-            .setMessage(R.string.fork_notice_content)
+            .setTitle(R.string.about_app_intro)
+            .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }
