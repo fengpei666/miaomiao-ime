@@ -43,8 +43,8 @@ object RemoteApi {
                 // 时间戳参数：让 CDN 视为新资源，避免读到旧公告/旧版本号
                 val url = URL("$base/$file?t=${System.currentTimeMillis()}")
                 val conn = (url.openConnection() as HttpURLConnection).apply {
-                    connectTimeout = 8_000
-                    readTimeout = 12_000
+                    connectTimeout = 6_000
+                    readTimeout = 10_000
                     instanceFollowRedirects = true
                     setRequestProperty("Accept", "application/json")
                     setRequestProperty("Cache-Control", "no-cache")

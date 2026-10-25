@@ -23,10 +23,11 @@ object Const {
 
     /**
      * 在线数据源：仓库里的静态 JSON（remote/ 目录），无需自建后端。
-     * 依次尝试，先到先得（国内 jsDelivr 通常更快，raw 作为回退）。
+     * 依次尝试，先到先得：raw 最实时；ghproxy 供国内直连；jsDelivr 有缓存，仅作兜底。
      */
     val remoteJsonBases = listOf(
-        "https://cdn.jsdelivr.net/gh/fengpei666/miaomiao-ime@master/remote",
-        "https://raw.githubusercontent.com/fengpei666/miaomiao-ime/master/remote"
+        "https://raw.githubusercontent.com/fengpei666/miaomiao-ime/master/remote",
+        "https://ghproxy.net/https://raw.githubusercontent.com/fengpei666/miaomiao-ime/master/remote",
+        "https://cdn.jsdelivr.net/gh/fengpei666/miaomiao-ime@master/remote"
     )
 }
