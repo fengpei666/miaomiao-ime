@@ -21,6 +21,12 @@ object Const {
     const val privacyPolicyUrl = "https://miao.zyycyun.cn/privacy/"
     const val faqUrl = "https://miao.zyycyun.cn/faq/"
 
-    /** 在线接口基址（喵喵输入法后端） */
-    const val API_BASE = "https://miao.zyycyun.cn/api"
+    /**
+     * 在线数据源：仓库里的静态 JSON（remote/ 目录），无需自建后端。
+     * 依次尝试，先到先得（国内 jsDelivr 通常更快，raw 作为回退）。
+     */
+    val remoteJsonBases = listOf(
+        "https://cdn.jsdelivr.net/gh/fengpei666/miaomiao-ime@master/remote",
+        "https://raw.githubusercontent.com/fengpei666/miaomiao-ime/master/remote"
+    )
 }

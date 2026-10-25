@@ -7,7 +7,7 @@ package org.fcitx.fcitx5.android.data.remote
 import kotlinx.serialization.Serializable
 
 /**
- * 更新信息（update.php / beta.php 返回，字段平铺，兼容原 JSON）。
+ * 更新信息（对应 remote/update.json、remote/beta.json，字段平铺）。
  */
 @Serializable
 data class UpdateInfo(
@@ -33,7 +33,7 @@ data class UpdateInfo(
 )
 
 /**
- * 公告列表（notice.php?versionCode=NNN 返回，服务端已按版本/时间/启用过滤）。
+ * 公告列表（对应 remote/notice.json；版本/时间/启用由客户端过滤）。
  */
 @Serializable
 data class NoticeList(
@@ -62,7 +62,7 @@ data class NoticeItem(
 )
 
 /**
- * 赞助信息（sponsor.php 返回）。
+ * 赞助信息（对应 remote/sponsor.json）。
  */
 @Serializable
 data class SponsorInfo(
@@ -86,7 +86,7 @@ data class SponsorItem(
 )
 
 /**
- * 全局配置（config.php 返回）。
+ * 全局配置（对应 remote/config.json）。
  */
 @Serializable
 data class GlobalConfig(

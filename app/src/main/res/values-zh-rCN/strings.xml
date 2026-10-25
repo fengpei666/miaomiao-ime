@@ -118,6 +118,8 @@
     <string name="about_app_intro_p3">· 打中文后自动追加猫娘语气后缀，强度可调</string>
     <string name="about_app_intro_p4">· 表情符号、剪贴板、快捷短语、主题与键盘布局</string>
     <string name="about_contributors">贡献者</string>
+    <string name="contributor_author">fengpei</string>
+    <string name="contributor_author_summary">作者 / 维护者</string>
     <string name="contributor_claude">Claude</string>
     <string name="contributor_claude_summary">AI 编程助手 · 参与开发与发布</string>
     <string name="about_license">开源</string>

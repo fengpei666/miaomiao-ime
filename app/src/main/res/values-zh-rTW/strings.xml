@@ -103,6 +103,8 @@
     <string name="about_app_intro_p3">· 打中文後自動追加貓娘語氣後綴，強度可調</string>
     <string name="about_app_intro_p4">· 表情符號、剪貼簿、快捷短語、主題與鍵盤配置</string>
     <string name="about_contributors">貢獻者</string>
+    <string name="contributor_author">fengpei</string>
+    <string name="contributor_author_summary">作者 / 維護者</string>
     <string name="contributor_claude">Claude</string>
     <string name="contributor_claude_summary">AI 程式助手 · 參與開發與發佈</string>
     <string name="about_license">開源</string>

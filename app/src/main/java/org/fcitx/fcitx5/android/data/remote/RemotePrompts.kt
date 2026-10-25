@@ -86,7 +86,7 @@ object RemotePrompts {
                         else setCancelable(false)
                     }.show()
                 } else {
-                    // 内置下载：原逻辑，打开下载地址（api/download.php）
+                    // 内置下载：打开 JSON 中配置的下载地址（通常是 GitHub Releases）
                     openBrowser(context, info.downloadUrl.ifEmpty { info.apkUrl })
                 }
             }

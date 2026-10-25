@@ -14,6 +14,23 @@
 | fengpei | 作者 / 维护者 |
 | Claude | AI 编程助手 · 参与代码与发布 |
 
+## 在线数据 / Remote data
+
+App 的「检查更新」「公告」「在线服务」「赞助」全部读取本仓库 `remote/` 目录下的静态 JSON，不使用自建后端。
+修改后推送到 `master` 即生效（CDN 有缓存，客户端已带时间戳参数，通常几分钟内更新）。
+
+| 文件 | 用途 | 关键字段 |
+| --- | --- | --- |
+| `remote/update.json` | 正式版更新 | `available`、`versionCode`、`versionName`、`downloadUrl`、`updateLog`、`force` |
+| `remote/beta.json` | 内测版更新 | 同上 |
+| `remote/notice.json` | 公告 | 数组 `notices[]`，每项：`id`、`title`、`content`、`enabled`、`minVersionCode`、`maxVersionCode`、`startTime`、`endTime`、`linkText`、`linkUrl` |
+| `remote/config.json` | 在线服务入口 | `maintenance`、`qqGroup`、`douyinGroup`、`feedbackUrl`、`privacyUrl`、`shareText` |
+| `remote/sponsor.json` | 赞助入口 | `enabled`、`title`、`desc`、`url`、`sponsors[]` |
+
+- 发新版：把 `available` 置为 `true`，`versionCode` 填比当前 App 更大的值，`downloadUrl` 填 GitHub Releases 里的 APK 地址。
+- 公告时间格式支持 `yyyy-MM-dd HH:mm:ss`、`yyyy-MM-dd HH:mm`、ISO 8601 或纯日期；留空表示不限。
+- 数据源依次尝试 jsDelivr 与 raw.githubusercontent，任一可用即可；全部失败时静默降级（不弹窗、不报错）。
+
 ## 开源声明 / License
 
 本项目基于 [Fcitx5 for Android](https://github.com/fcitx5-android/fcitx5-android)（fcitx5，中文名「小企鹅输入法」）二次开发，遵循 [LGPL-2.1-or-later](./LICENSE)。

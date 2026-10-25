@@ -61,6 +61,9 @@ class AboutFragment : PaddingPreferenceFragment() {
             }
             addCategory(R.string.about_contributors) {
                 isIconSpaceReserved = false
+                addPreference(R.string.contributor_author, R.string.contributor_author_summary) {
+                    openUrl(Const.githubRepo)
+                }
                 addPreference(R.string.contributor_claude, R.string.contributor_claude_summary) {
                     openUrl("https://claude.ai")
                 }

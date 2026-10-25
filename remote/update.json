@@ -1,0 +1,18 @@
+{
+  "versionCode": 122,
+  "versionName": "0.1.4",
+  "updateTime": "2026-10-25",
+  "apkPath": "",
+  "apkUrl": "https://github.com/fengpei666/miaomiao-ime/releases/latest",
+  "apkSize": 0,
+  "updateLog": "关于页以喵喵输入法为主体，修复换行转义\n在线更新 / 公告 / 在线服务改为 GitHub 托管，加载更稳定\n公告支持按版本号与时间过滤\n贡献者顺序调整：作者在前，Claude 在后",
+  "force": false,
+  "minSupportCode": 1,
+  "available": true,
+  "apkSizeText": "",
+  "downloadUrl": "https://github.com/fengpei666/miaomiao-ime/releases/latest",
+  "updateMode": "redirect",
+  "redirectUrl": "https://github.com/fengpei666/miaomiao-ime/releases/latest",
+  "redirectTip": "将跳转到 GitHub Releases 下载最新安装包",
+  "serverTime": ""
+}

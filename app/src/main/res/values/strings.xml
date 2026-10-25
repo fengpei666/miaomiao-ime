@@ -118,6 +118,8 @@
     <string name="about_app_intro_p3">· Automatically appends a catgirl tone suffix after Chinese text</string>
     <string name="about_app_intro_p4">· Emoji &amp; symbols, clipboard, quick phrases, themes and keyboard layouts</string>
     <string name="about_contributors">Contributors</string>
+    <string name="contributor_author">fengpei</string>
+    <string name="contributor_author_summary">Author / Maintainer</string>
     <string name="contributor_claude">Claude</string>
     <string name="contributor_claude_summary">AI coding assistant · code and release</string>
     <string name="about_license">Open source</string>
