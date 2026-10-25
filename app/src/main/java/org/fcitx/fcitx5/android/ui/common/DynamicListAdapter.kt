@@ -1,0 +1,258 @@
+/*
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ * SPDX-FileCopyrightText: Copyright 2021-2023 Fcitx5 for Android Contributors
+ */
+package org.fcitx.fcitx5.android.ui.common
+
+import android.annotation.SuppressLint
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageButton
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.annotation.CallSuper
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import org.fcitx.fcitx5.android.ui.main.MainViewModel
+import org.fcitx.fcitx5.android.ui.main.MainViewModel.ButtonMode
+import java.util.Collections
+
+abstract class DynamicListAdapter<T>(
+    initialEntries: List<T>,
+    val enableAddAndDelete: Boolean = true,
+    val enableOrder: Boolean = false,
+    val initCheckBox: (CheckBox.(T) -> Unit) = { visibility = View.GONE },
+    var initEditButton: (ImageButton.(T) -> Unit) = { visibility = View.GONE },
+    var initSettingsButton: (ImageButton.(T) -> Unit) = { visibility = View.GONE }
+) :
+    RecyclerView.Adapter<DynamicListAdapter<T>.ViewHolder>() {
+
+    private val _entries = initialEntries.toMutableList()
+
+    val entries: List<T>
+        get() = _entries
+
+    var multiselect = false
+        private set
+
+    private val selected = mutableListOf<T>()
+
+    private var listener: OnItemChangedListener<T>? = null
+
+    fun removeItemChangedListener() {
+        listener = null
+    }
+
+    fun addOnItemChangedListener(x: OnItemChangedListener<T>) {
+        listener = listener?.let { OnItemChangedListener.merge(it, x) } ?: x
+    }
+
+    protected var itemTouchHelper: ItemTouchHelper? = null
+
+    var removable: (T) -> Boolean = { true }
+
+    /**
+     * 每次绑定条目后调用，供具体页面做额外装饰（例如标记“默认”项）
+     */
+    var entryDecorator: ((ViewHolder, T, Int) -> Unit)? = null
+
+    /**
+     * 条目点击回调；为 null 时保持旧的多选切换行为
+     */
+    var onEntryClick: ((T) -> Unit)? = null
+
+    /**
+     * 是否固定首项：固定后首项既不能被拖走，也不能被其它项顶替
+     */
+    var protectFirstItem: Boolean = false
+
+    private var onBackPressedCallback: OnBackPressedCallback? = null
+
+    abstract fun showEntry(x: T): String
+
+    private var mainViewModel: MainViewModel? = null
+
+    fun setViewModel(model: MainViewModel) {
+        mainViewModel = model
+    }
+
+    inner class ViewHolder(entryUi: DynamicListEntryUi) : RecyclerView.ViewHolder(entryUi.root) {
+        val multiselectCheckBox = entryUi.multiselectCheckBox
+        val handleImage = entryUi.handleImage
+        val checkBox = entryUi.checkBox
+        val nameText = entryUi.nameText
+        val editButton = entryUi.editButton
+        val settingsButton = entryUi.settingsButton
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(DynamicListEntryUi(parent.context))
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = entries[position]
+        with(holder) {
+            handleImage.setOnLongClickListener {
+                if (!multiselect && removable(item))
+                    itemTouchHelper
+                        ?.startDrag(this)
+                        ?.run { true }
+                        ?: false
+                else false
+            }
+            nameText.text = showEntry(item)
+
+            if (multiselect) {
+                handleImage.visibility = View.GONE
+                multiselectCheckBox.visibility = View.VISIBLE
+                checkBox.visibility = View.GONE
+                settingsButton.visibility = View.GONE
+                editButton.visibility = View.GONE
+            } else {
+                handleImage.visibility = if (enableOrder) View.VISIBLE else View.GONE
+                multiselectCheckBox.visibility = View.GONE
+                checkBox.visibility = View.VISIBLE
+                settingsButton.visibility = View.VISIBLE
+                editButton.visibility = View.VISIBLE
+                initCheckBox(checkBox, item)
+                initSettingsButton(settingsButton, item)
+                initEditButton(editButton, item)
+            }
+
+            multiselectCheckBox.isChecked = item in selected
+
+            if (enableAddAndDelete && removable(item)) {
+                multiselectCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                    select(item, isChecked)
+                }
+                nameText.setOnLongClickListener {
+                    itemTouchHelper?.startDrag(holder)
+                    true
+                }
+                nameText.setOnClickListener {
+                    val clickHandler = onEntryClick
+                    if (multiselect || clickHandler == null) multiselectCheckBox.toggle()
+                    else clickHandler(item)
+                }
+            } else {
+                multiselectCheckBox.isEnabled = false
+                multiselectCheckBox.setOnCheckedChangeListener(null)
+                nameText.setOnClickListener {
+                    onEntryClick?.invoke(item)
+                }
+            }
+
+            entryDecorator?.invoke(holder, item, position)
+        }
+    }
+
+    override fun onViewRecycled(holder: DynamicListAdapter<T>.ViewHolder) {
+        // reset view state and remove listeners once recycled
+        holder.apply {
+            multiselectCheckBox.setOnCheckedChangeListener(null)
+            multiselectCheckBox.isEnabled = true
+            multiselectCheckBox.isChecked = false
+            checkBox.setOnCheckedChangeListener(null)
+            checkBox.isEnabled = true
+            checkBox.isChecked = false
+            nameText.setOnClickListener(null)
+            settingsButton.setOnClickListener(null)
+            editButton.setOnClickListener(null)
+        }
+    }
+
+    private fun select(item: T, shouldSelect: Boolean) {
+        if (!enableAddAndDelete || !multiselect)
+            return
+        if (shouldSelect) {
+            if (selected.indexOf(item) == -1) selected.add(item)
+        } else {
+            selected.remove(item)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @CallSuper
+    open fun enterMultiSelect(onBackPressedDispatcher: OnBackPressedDispatcher) {
+        mainViewModel?.let {
+            if (multiselect)
+                return
+            onBackPressedCallback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    exitMultiSelect()
+                }
+            }
+            onBackPressedDispatcher.addCallback(onBackPressedCallback!!)
+            it.toolbarButton.value = ButtonMode.DELETE
+            multiselect = true
+            notifyDataSetChanged()
+        }
+    }
+
+
+    internal fun deleteSelected() {
+        if (!multiselect || selected.isEmpty())
+            return
+        val indexed = selected.filter(removable).mapNotNull { entry ->
+            indexItem(entry).takeIf { it != -1 }?.let { it to entry }
+        }.sortedByDescending { it.first }
+        indexed.forEach { (index, _) ->
+            _entries.removeAt(index)
+            notifyItemRemoved(index)
+        }
+        listener?.onItemRemovedBatch(indexed)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @CallSuper
+    open fun exitMultiSelect() {
+        mainViewModel?.let {
+            if (!multiselect)
+                return
+            onBackPressedCallback?.remove()
+            multiselect = false
+            selected.clear()
+            notifyDataSetChanged()
+            it.toolbarButton.value = if (entries.isNotEmpty()) ButtonMode.EDIT else ButtonMode.NONE
+        }
+    }
+
+    override fun getItemCount(): Int = entries.size
+
+    @CallSuper
+    open fun addItem(idx: Int = _entries.size, item: T) {
+        _entries.add(idx, item)
+        notifyItemInserted(idx)
+        listener?.onItemAdded(idx, item)
+        mainViewModel?.toolbarButton?.value = ButtonMode.EDIT
+    }
+
+    @CallSuper
+    open fun removeItem(idx: Int): T {
+        val item = _entries.removeAt(idx)
+        notifyItemRemoved(idx)
+        listener?.onItemRemoved(idx, item)
+        if (entries.isEmpty())
+            mainViewModel?.toolbarButton?.value = ButtonMode.NONE
+        return item
+    }
+
+    @CallSuper
+    open fun swapItem(fromIdx: Int, toIdx: Int) {
+        Collections.swap(_entries, fromIdx, toIdx)
+        notifyItemMoved(fromIdx, toIdx)
+        listener?.onItemSwapped(fromIdx, toIdx, _entries[toIdx])
+    }
+
+
+
+    @CallSuper
+    open fun updateItem(idx: Int, item: T) {
+        val old = _entries[idx]
+        _entries[idx] = item
+        notifyItemChanged(idx)
+        listener?.onItemUpdated(idx, old, item)
+    }
+
+    fun indexItem(item: T): Int = _entries.indexOf(item)
+}

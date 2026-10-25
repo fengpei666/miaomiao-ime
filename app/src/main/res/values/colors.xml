@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red_A700">#D50000</color>
+    <color name="red_400">#EF5350</color>
+    <color name="yellow_500">#FFEB3B</color>
+    <color name="yellow_800">#F9A825</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="grey_400">#BDBDBD</color>
+    <color name="grey_700">#616161</color>
+
+    <!-- 喵喵输入法 · 淡粉色主题 -->
+    <color name="pink_light">#FCE4EC</color>
+    <color name="pink_primary">#F8BBD0</color>
+    <color name="pink_primary_dark">#F06292</color>
+    <color name="pink_accent">#F06292</color>
+    <color name="pink_night_primary">#F06292</color>
+    <color name="pink_night_primary_dark">#AD1457</color>
+    <color name="pink_night_accent">#F48FB1</color>
+</resources>
