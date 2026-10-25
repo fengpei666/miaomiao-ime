@@ -29,7 +29,20 @@ App 的「检查更新」「公告」「在线服务」「赞助」全部读取�
 
 - 发新版：把 `available` 置为 `true`，`versionCode` 填比当前 App 更大的值，`downloadUrl` 填 GitHub Releases 里的 APK 地址。
 - 公告时间格式支持 `yyyy-MM-dd HH:mm:ss`、`yyyy-MM-dd HH:mm`、ISO 8601 或纯日期；留空表示不限。
-- 数据源依次尝试 jsDelivr 与 raw.githubusercontent，任一可用即可；全部失败时静默降级（不弹窗、不报错）。
+- 数据源依次尝试 raw.githubusercontent、ghproxy、jsDelivr，任一可用即可；全部失败时静默降级（不弹窗、不报错）。
+
+### 发版 / Release
+
+推送 `v*` tag 会触发 `.github/workflows/release-apk.yml`，按 ABI 构建正式包并自动上传到对应 Release。
+需先在仓库 Settings → Secrets and variables → Actions 配置：
+
+| Secret | 说明 |
+| --- | --- |
+| `SIGN_KEY_BASE64` | release keystore 的 Base64（`base64 -w0 release.keystore`） |
+| `SIGN_KEY_PWD` | keystore 密码（同时作为 key 密码） |
+| `SIGN_KEY_ALIAS` | key 别名 |
+
+也可以在 Actions 页面手动运行该 workflow 并填入已存在的 tag 重新构建。
 
 ## 开源声明 / License
 

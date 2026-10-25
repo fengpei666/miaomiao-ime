@@ -1,0 +1,107 @@
+name: Release APK
+
+# 推送 v* tag 时自动构建正式包并上传到对应 Release；
+# 也可以在 Actions 页面手动指定一个已存在的 tag 重新构建。
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要构建并发布到 Release 的 tag（例如 v0.1.4）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        abi:
+          - arm64-v8a
+          - armeabi-v7a
+          - x86_64
+          - x86
+    steps:
+      - name: Fetch source code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android environment
+        uses: android-actions/setup-android@v4
+
+      - name: Install NDK and CMake
+        run: sdkmanager --install "cmake;3.31.6" "ndk;28.0.13004108"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y extra-cmake-modules gettext
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Resolve version name
+        run: echo "BUILD_VERSION_NAME=${TAG#v}" >> "$GITHUB_ENV"
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+
+      - name: Check signing secrets
+        env:
+          SIGN_KEY_BASE64: ${{ secrets.SIGN_KEY_BASE64 }}
+          SIGN_KEY_PWD: ${{ secrets.SIGN_KEY_PWD }}
+          SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+        run: |
+          missing=""
+          [ -z "$SIGN_KEY_BASE64" ] && missing="$missing SIGN_KEY_BASE64"
+          [ -z "$SIGN_KEY_PWD" ] && missing="$missing SIGN_KEY_PWD"
+          [ -z "$SIGN_KEY_ALIAS" ] && missing="$missing SIGN_KEY_ALIAS"
+          if [ -n "$missing" ]; then
+            echo "::error::缺少仓库 Secret:$missing（Settings → Secrets and variables → Actions）"
+            exit 1
+          fi
+
+      - name: Build release APK
+        env:
+          BUILD_ABI: ${{ matrix.abi }}
+          SIGN_KEY_BASE64: ${{ secrets.SIGN_KEY_BASE64 }}
+          SIGN_KEY_PWD: ${{ secrets.SIGN_KEY_PWD }}
+          SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+        run: ./gradlew :app:assembleRelease --no-daemon
+
+      - name: Collect APKs
+        run: |
+          mkdir -p dist
+          for f in app/build/outputs/apk/release/*.apk; do
+            [ -e "$f" ] || continue
+            cp "$f" "dist/$(basename "$f")"
+          done
+          ls -l dist
+          test -n "$(ls -A dist)"
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          files: dist/*.apk
+          fail_on_unmatched_files: true
+          draft: false
+          prerelease: false
